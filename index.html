@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Esquiva</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-size: 30px; 
+            background-color: blanchedalmond; 
+        }
+
+        #player {
+            position: absolute;
+            bottom: 30px; 
+            left: 50%;
+            transform: translateX(-50%);
+            transition: left 0.3s ease; 
+        }
+
+        .obstacle {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            font-size: 40px; /
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="player">👸🏾</div>
+
+    <script>
+        const player = document.getElementById('player');
+        let score = 0;
+        let gameInterval;
+
+        document.addEventListener('touchstart', handleTouchStart);
+        document.addEventListener('touchmove', handleTouchMove);
+
+        function handleTouchStart(event) {
+            /
+            event.preventDefault();
+        }
+
+        function handleTouchMove(event) {
+            
+            const touchX = event.touches[0].clientX;
+
+            
+            let newPlayerPosition = touchX - player.offsetWidth / 2;
+
+            
+            const maxPlayerPosition = window.innerWidth - player.offsetWidth;
+            newPlayerPosition = Math.min(Math.max(newPlayerPosition, 0), maxPlayerPosition);
+
+            player.style.left = newPlayerPosition + 'px';
+        }
+
+        function createObstacle() {
+            const obstacle = document.createElement('div');
+            obstacle.className = 'obstacle';
+            
+            obstacle.innerHTML = '💘';
+            obstacle.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+            obstacle.style.top = '0px';
+            document.body.appendChild(obstacle);
+
+            const moveObstacle = setInterval(function () {
+                const obstaclePosition = parseInt(window.getComputedStyle(obstacle).top);
+
+                if (obstaclePosition < window.innerHeight) {
+                    obstacle.style.top = obstaclePosition + 15 + 'px';
+                } else {
+                    clearInterval(moveObstacle);
+                    document.body.removeChild(obstacle);
+                    score += 10;
+
+                    if (score >= 153) {
+                        alert('Feliz 5 meses meu amor!! 153 dias ao lado da mulher mais incrível do mundo, obrigado por tudo minha princesa, pela paciência, aprendizado e principalmente por estar curando feridas que você nem causou. Saiba que sou imensamente feliz por te ter na minha vida e não vejo a hora de tê-la nos meus braços e poder te dar todo o amor que existe em mim. Eu te amo pra sempre ^^');
+                        window.location.reload();
+                    }
+                }
+
+                const playerRect = player.getBoundingClientRect();
+                const obstacleRect = obstacle.getBoundingClientRect();
+
+                if (
+                    playerRect.bottom > obstacleRect.top &&
+                    playerRect.top < obstacleRect.bottom &&
+                    playerRect.right > obstacleRect.left &&
+                    playerRect.left < obstacleRect.right
+                ) {
+                    clearInterval(moveObstacle);
+                    clearInterval(gameInterval);
+                    alert('Hehehe, perdeu -.- Pontuação: ' + score);
+                    window.location.reload();
+                }
+            }, 30);  
+        }
+
+        
+        gameInterval = setInterval(createObstacle, 1000);
+    </script>
+</body>
+
+</html>
